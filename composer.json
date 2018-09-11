@@ -1,0 +1,22 @@
+{
+    "name":        "wakeapp/dbal-enum-type",
+    "description": "Provides basic functionality for working with ENUM in the Doctrine",
+    "type":        "library",
+    "keywords":    ["dbal", "enum", "dbal-type"],
+    "license":     "proprietary",
+
+    "require": {
+        "php":              "~7.1",
+        "doctrine/dbal":    "~2.0"
+    },
+
+    "suggest": {
+        "doctrine/doctrine-bundle": "Provides integration Doctrine with Symfony framework"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Wakeapp\\Component\\DbalEnumType\\": ""
+        }
+    }
+}
