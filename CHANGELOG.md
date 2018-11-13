@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.2.0] 2018-11-13
 ### Added
 - Added possibility for use `doctrine:schema:update` with the ENUM's filed type.
 

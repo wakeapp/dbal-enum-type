@@ -7,6 +7,11 @@ DBAL Enum Type
 Компонент предоставляет базовую функциональность для регистрации нового типа данных `ENUM` в `Doctrine`.
 Таже поддерживается механизм `doctrine:schema:update` для `ENUM`'ов.
 
+**Важно:** чтобы реализация поддержки `ENUM`'ов в команде `doctrine:schema:update` работала корректно
+**не** указывайте движок базы данных:
+* Работает корректно - `//user:pa$$word@host:3306/db_name`
+* Работать не будет - `mysql://user:pa$$word@host:3306/db_name`
+
 Установка
 ---------
 
@@ -112,7 +117,26 @@ class AppAcmeBundleBundle extends Bundle
         parent::boot();
     }
 }
+```
 
+Дополнительно
+-------------
+
+В случае использования `Symfony Framework` необходимо зарегистрировать класс `EnumEventSubscriber` как сервис
+с тегом `doctrine.event_subscriber`:
+
+```yaml
+    wakeapp.dbal_enum_type.event_subscriber.enum_event:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+```
+
+А также указать `driver_class` в конфигурации `doctrine/doctrine-bundle`:
+
+```yaml
+doctrine:
+    dbal:
+        driver_class:   Wakeapp\Component\DbalEnumType\Driver\PDOMySql\EnumAwareDriver
 ```
 
 Лицензия
