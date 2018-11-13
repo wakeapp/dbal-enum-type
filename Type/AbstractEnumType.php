@@ -9,6 +9,10 @@ use Doctrine\DBAL\Types\Type;
 use InvalidArgumentException;
 use Wakeapp\Component\DbalEnumType\Enum\AbstractEnum;
 use Wakeapp\Component\DbalEnumType\Exception\EnumException;
+use function array_values;
+use function implode;
+use function in_array;
+use function sprintf;
 
 abstract class AbstractEnumType extends Type
 {
@@ -20,11 +24,21 @@ abstract class AbstractEnumType extends Type
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
+        return $this->getEnumDeclaration();
+    }
+
+    /**
+     * @return string
+     *
+     * @throws EnumException
+     */
+    public function getEnumDeclaration(): string
+    {
         $closure = function ($value) {
-            return sprintf("'%s'", $value);
+            return sprintf('\'%s\'', $value);
         };
 
-        $values = implode(', ', array_map($closure, static::getValues()));
+        $values = implode(',', array_map($closure, $this->getValues()));
 
         return sprintf('ENUM(%s)', $values);
     }
@@ -34,7 +48,7 @@ abstract class AbstractEnumType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (!\in_array($value, static::getValues(), true)) {
+        if (!in_array($value, $this->getValues(), true)) {
             throw new InvalidArgumentException(sprintf('Invalid %s value.', $value));
         }
 
@@ -62,7 +76,7 @@ abstract class AbstractEnumType extends Type
      *
      * @throws EnumException
      */
-    public static function getChoices(): array
+    public function getChoices(): array
     {
         $baseEnumClass = static::BASE_ENUM_CLASS;
 
@@ -79,8 +93,8 @@ abstract class AbstractEnumType extends Type
      *
      * @throws EnumException
      */
-    public static function getValues(): array
+    public function getValues(): array
     {
-        return array_keys(static::getChoices());
+        return array_values($this->getChoices());
     }
 }
