@@ -37,7 +37,7 @@ class EnumEventSubscriber implements EventSubscriber
         $mysqlType = $args->getTableColumn()['Type'];
         $mysqlType = mb_strtolower($mysqlType);
 
-        $enumDeclaration = $type->getEnumDeclaration();
+        $enumDeclaration = $type->getSQLDeclaration($column->toArray(), $args->getDatabasePlatform());
         $enumDeclaration = mb_strtolower($enumDeclaration);
 
         if ($enumDeclaration === $mysqlType) {

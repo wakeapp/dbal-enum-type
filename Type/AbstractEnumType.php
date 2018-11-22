@@ -7,38 +7,44 @@ namespace Wakeapp\Component\DbalEnumType\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use InvalidArgumentException;
-use Wakeapp\Component\DbalEnumType\Enum\AbstractEnum;
+use ReflectionClass;
+use ReflectionException;
 use Wakeapp\Component\DbalEnumType\Exception\EnumException;
-use function array_values;
 use function implode;
 use function in_array;
 use function sprintf;
 
 abstract class AbstractEnumType extends Type
 {
-    public const NAME = null;
-    public const BASE_ENUM_CLASS = null;
+    /**
+     * @var array
+     */
+    protected static $enumList;
+
+    /**
+     * Returns class name which contains constants. Constants values will be used as ENUM values.
+     *
+     * @return string
+     */
+    abstract public static function getEnumClass(): string;
+
+    /**
+     * Returns name of the doctrine type
+     *
+     * @return string
+     */
+    abstract public static function getTypeName(): string;
 
     /**
      * {@inheritdoc}
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
-        return $this->getEnumDeclaration();
-    }
-
-    /**
-     * @return string
-     *
-     * @throws EnumException
-     */
-    public function getEnumDeclaration(): string
-    {
         $closure = function ($value) {
             return sprintf('\'%s\'', $value);
         };
 
-        $values = implode(',', array_map($closure, $this->getValues()));
+        $values = implode(',', array_map($closure, static::getValues()));
 
         return sprintf('ENUM(%s)', $values);
     }
@@ -48,7 +54,7 @@ abstract class AbstractEnumType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (!in_array($value, $this->getValues(), true)) {
+        if (!in_array($value, static::getValues(), true)) {
             throw new InvalidArgumentException(sprintf('Invalid %s value.', $value));
         }
 
@@ -68,33 +74,42 @@ abstract class AbstractEnumType extends Type
      */
     public function getName(): ?string
     {
-        return static::NAME;
+        return static::getTypeName();
     }
 
     /**
+     * Returns list of the enum values
+     *
      * @return array
      *
      * @throws EnumException
      */
-    public function getChoices(): array
+    public static function getValues(): array
     {
-        $baseEnumClass = static::BASE_ENUM_CLASS;
+        $enumClass = static::getEnumClass();
 
-        if (is_subclass_of($baseEnumClass, AbstractEnum::class)) {
-            /** @var AbstractEnum $baseEnumClass */
-            return $baseEnumClass::getListCombine();
+        if (!empty(static::$enumList[$enumClass])) {
+            return static::$enumList[$enumClass];
         }
 
-        throw new EnumException(sprintf('BASE_ENUM_CLASS should be an instance of "%s"', AbstractEnum::class));
+        try {
+            $class = new ReflectionClass($enumClass);
+        } catch (ReflectionException $e) {
+            throw new EnumException(sprintf('Failed to create class %s', $enumClass));
+        }
+
+        static::setValues($class->getConstants());
+
+        return static::$enumList[$enumClass];
     }
 
     /**
-     * @return array
+     * Set currently registered enum values
      *
-     * @throws EnumException
+     * @param array $array
      */
-    public function getValues(): array
+    public static function setValues(array $array)
     {
-        return array_values($this->getChoices());
+        static::$enumList[static::getEnumClass()] = $array;
     }
 }

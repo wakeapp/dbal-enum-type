@@ -25,17 +25,17 @@ DBAL Enum Type
 Пример использования
 --------------------
 
-В качестве примера рассмотрим пример на перечислении языков. Для начала нам необходимо создать
-класс с перечислениями доступных языков:
+В качестве примера рассмотрим перечисление языков. 
+Для начала нам необходимо создать класс со списком доступных языков:
 
 ```php
 <?php
 
+declare(strict_types=1);
+
 namespace App\AcmeBundle\Entity\Enum;
 
-use Wakeapp\Component\DbalEnumType\Enum\AbstractEnum;
-
-class LanguageListEnum extends AbstractEnum
+class LanguageListEnum
 {
     public const RU = 'ru';
     public const EN = 'en';
@@ -57,8 +57,21 @@ use Wakeapp\Component\DbalEnumType\Type\AbstractEnumType;
 
 class LanguageListEnumType extends AbstractEnumType
 {
-    public const NAME = 'language_list_enum'; // имя нового типа данных doctrine
-    public const BASE_ENUM_CLASS = LanguageListEnum::class;
+    /**
+     * {@inheritdoc}
+     */
+    public static function getEnumClass(): string
+    {
+        return LanguageListEnum::class;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public static function getTypeName(): string
+    {
+        return 'language_list_enum';
+    }
 }
 ```
 
@@ -69,7 +82,9 @@ class LanguageListEnumType extends AbstractEnumType
 ```php
 <?php
 
-\Doctrine\DBAL\Types\Type::addType(LanguageListEnumType::NAME, LanguageListEnumType::class);
+declare(strict_types=1);
+
+\Doctrine\DBAL\Types\Type::addType(LanguageListEnumType::getTypeName(), LanguageListEnumType::class);
 ```
 
 Если вы используете `Symfony`, то воспользуйтесь соответствующим разделом документации -
@@ -91,7 +106,7 @@ doctrine:
 doctrine:
     dbal:
         types:
-            # Где ключ это LanguageListEnumType::NAME и значение LanguageListEnumType::class
+            # Где ключ это LanguageListEnumType::getTypeName() и значение LanguageListEnumType::class
             language_list_enum: App\AcmeBundle\Doctrine\DBAL\Types\LanguageListEnumType
 ```
 
@@ -112,7 +127,7 @@ class AppAcmeBundleBundle extends Bundle
 {
     public function boot()
     {
-        Type::addType(LanguageListEnumType::NAME, LanguageListEnumType::class);
+        Type::addType(LanguageListEnumType::getTypeName(), LanguageListEnumType::class);
 
         parent::boot();
     }
@@ -121,6 +136,8 @@ class AppAcmeBundleBundle extends Bundle
 
 Дополнительно
 -------------
+
+### Использование вместе с Symfony
 
 В случае использования `Symfony Framework` необходимо зарегистрировать класс `EnumEventSubscriber` как сервис
 с тегом `doctrine.event_subscriber`:
@@ -138,6 +155,11 @@ doctrine:
     dbal:
         driver_class:   Wakeapp\Component\DbalEnumType\Driver\PDOMySql\EnumAwareDriver
 ```
+
+### Переопределение значений Enum
+
+При необходимости переопределить список значений `enum`,
+определенных на основе констант класса из метода `getEnumClass` вы можете вызвать метод `setValues`.
 
 Лицензия
 --------
