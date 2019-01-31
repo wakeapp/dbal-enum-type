@@ -1,3 +1,7 @@
+## [0.3.1] - 2019-01-31
+### Fixed
+- Add possibility receive NULL in `AbstractEnumType::convertToDatabaseValue`
+
 ## [0.3.0] - 2018-11-22
 ### Changed
 - Totally reworked `AbstractEnumType`:

@@ -54,11 +54,15 @@ abstract class AbstractEnumType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (!in_array($value, static::getValues(), true)) {
-            throw new InvalidArgumentException(sprintf('Invalid %s value.', $value));
+        if ($value === null) {
+            return null;
         }
 
-        return $value;
+        if (in_array($value, static::getValues(), true)) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(sprintf('Invalid %s value.', $value));
     }
 
     /**
