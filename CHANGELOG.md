@@ -1,3 +1,9 @@
+## [1.0.0] - 2019-05-15
+### Added
+- Added information about license.
+### Changed
+- Extends `EnumException` from the `RuntimeException` instead `Exception`.
+
 ## [0.3.1] - 2019-01-31
 ### Fixed
 - Add possibility receive NULL in `AbstractEnumType::convertToDatabaseValue`

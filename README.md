@@ -1,6 +1,9 @@
 DBAL Enum Type
 ==============
 
+[![Latest Stable Version](https://poser.pugx.org/wakeapp/dbal-enum-type/v/stable)](https://packagist.org/packages/wakeapp/dbal-enum-type)
+[![Total Downloads](https://poser.pugx.org/wakeapp/dbal-enum-type/downloads)](https://packagist.org/packages/wakeapp/dbal-enum-type)
+
 Введение
 --------
 
@@ -29,9 +32,7 @@ DBAL Enum Type
 Для начала нам необходимо создать класс со списком доступных языков:
 
 ```php
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\AcmeBundle\Entity\Enum;
 
@@ -46,9 +47,7 @@ class LanguageListEnum
 Для регистрации нашего перечисления как новый тип данных `Doctrine` необходимо создать еще один класс:
 
 ```php
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\AcmeBundle\Doctrine\DBAL\Types;
 
@@ -80,9 +79,7 @@ class LanguageListEnumType extends AbstractEnumType
 [Custom Mapping Types](https://www.doctrine-project.org/projects/doctrine-dbal/en/current/reference/types.html#custom-mapping-types).
 
 ```php
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 \Doctrine\DBAL\Types\Type::addType(LanguageListEnumType::getTypeName(), LanguageListEnumType::class);
 ```
@@ -113,9 +110,7 @@ doctrine:
 Второй способ подойдет если вы используете отдельный бандл. Регистрация происходит через метод `boot`:
 
 ```php
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\AcmeBundle;
 
@@ -164,4 +159,4 @@ doctrine:
 Лицензия
 --------
 
-![license](https://img.shields.io/badge/License-proprietary-red.svg?style=flat-square)
+[![license](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](./LICENSE)

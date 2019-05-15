@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the DbalEnumType package.
+ *
+ * (c) Wakeapp <https://wakeapp.ru>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Wakeapp\Component\DbalEnumType\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
@@ -10,6 +19,7 @@ use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 use Wakeapp\Component\DbalEnumType\Exception\EnumException;
+use function array_map;
 use function implode;
 use function in_array;
 use function sprintf;
