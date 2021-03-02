@@ -1,3 +1,7 @@
+## [Unreleased]
+### Added
+- Support PHP ~8.0.
+
 ## [1.0.0] - 2019-05-15
 ### Added
 - Added information about license.
