@@ -8,7 +8,7 @@
     "require": {
         "php":              "~7.1 || ~8.0",
         "ext-mbstring":     "*",
-        "doctrine/dbal":    "~3.1.1"
+        "doctrine/dbal":    "~2.13"
     },
 
     "suggest": {
